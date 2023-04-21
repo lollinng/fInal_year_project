@@ -68,6 +68,7 @@
              $('#form_v2d').submit(function(){
                 var form = $(this);
                 var data = new FormData(form[0]);
+                
                 $.ajax({
                     url : form.attr('action'),
                     type: form.attr('method'),
@@ -89,6 +90,7 @@
                                 update_notification('danger', 'Something went wrong! No results found within successful request.')
                             } else {
                                 $('#results').text(result.join('\n'));
+                                send(result[0])
                                 update_notification('success', 'Request Completed.')
                             }
                         } else {
@@ -99,9 +101,37 @@
                         update_notification('warning', 'Request Failed: '+error);
                     }
                 });
+                
+            
+
                 return false;
             });
         }
+
+        function send(data){
+            var data_up = data.split(/<(.*)/s)[0]
+            JSON.stringify(data_up)
+            $.ajax({
+                    url: 'http://54.234.240.19:5000/receive_json/',
+                    contentType : 'application/json; charset=utf-8',
+                    dataType : 'json',
+                    type: 'POST',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    data: JSON.stringify({
+                        "video_id": 95,
+                        "video_caption": data_up
+                    }),
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+        }
+
     </script>
 </div>
 </body>

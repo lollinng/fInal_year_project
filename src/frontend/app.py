@@ -6,15 +6,23 @@ import re
 import traceback
 
 from copy import deepcopy
-from flask import Flask, render_template, request, send_from_directory
-from waitress import serve
 
+import requests
+from flask import Flask, render_template, request, send_from_directory
+from flask_cors import CORS
+from waitress import serve
+from common.logger import logger
 from common.config import get_app_config
 from common.rpc import get_rpc
 from common.status import ModelWeightsStatus
 
 app = Flask(__name__)
 config = get_app_config()
+
+# cors = CORS(app, resources={r"/api/*": {"origins": "*",
+#                                         "methods": ["GET", "POST"],
+#                                         }},
+#             headers=["Content-Type", "Authorization"])
 
 PREDICT_MODE_ONLY = config["PREDICT_MODE_ONLY"]
 PREFIX = config["PREFIX"]
@@ -149,6 +157,26 @@ def upload_file():
     filename = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     try:
         file.save(filename)
+        logger.debug(filename)
+
+        url = 'http://54.234.240.19:5000/uploadvideo/'
+
+        # with open(filename, 'rb') as f:
+        #     video_data = f.read()
+       
+        # headers = {'Content-Type': 'video/mp4'}
+        # response = requests.post(url, headers=headers, data=video_data)
+        # response = requests.post(url, headers=headers, data=file)
+        # print(response.text)
+        
+        files = {'video_file':open(filename,'rb')}
+        logger.debug('dsdsad')
+        r = requests.post(url,files=files)
+        logger.debug(r.status_code)
+        logger.debug(r.text)
+
+
+        # file.save('/home/pratham/codes/captioning/project/1.mp4')
         print("File uploaded: %s" %  filename)
         output = json.loads(predict_fnames([filename]))
     except Exception as e:

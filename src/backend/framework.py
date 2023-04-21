@@ -5,7 +5,8 @@ import numpy as np
 import os
 import shutil
 import sys
-
+import urllib
+import urllib2 
 from keras import callbacks
 from pprint import pformat
 from random import shuffle
@@ -16,6 +17,15 @@ from common.config import get_app_config, get_vpreprocess_config
 from common.logger import logger
 from common.status import ModelWeightsStatus
 
+def hit_api(caption):
+    url = 'http://54.226.48.11:5000/receive_json/'
+    video_id = 40
+    data = {"video_id": video_id, "video_caption": "tp tp"}
+    # response = requests.post(url, data=data)
+    data = urllib.urlencode(data)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req)
+    return response.read()
 
 WORKERS = 40
 DATASET_CACHE = get_app_config()["DATASET_CACHE"]
@@ -274,6 +284,7 @@ class Framework():
             logger.debug("For eog %s" % fnames[i])
             predictedCaption = ' '.join(predictions[i])
             logger.debug("Predicted Caption : %s" % predictedCaption )
+            # logger.debug(hit_api(predictedCaption))
             actualCaption = None
             if _ids is not None:
                 actualCaption = vHandler.getCaptionData()[_ids[i]]
