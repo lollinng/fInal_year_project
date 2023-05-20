@@ -15,7 +15,6 @@ from common.logger import logger
 from common.config import get_app_config
 from common.rpc import get_rpc
 from common.status import ModelWeightsStatus
-
 app = Flask(__name__)
 config = get_app_config()
 
@@ -159,7 +158,7 @@ def upload_file():
         file.save(filename)
         logger.debug(filename)
 
-        url = 'http://54.234.240.19:5000/uploadvideo/'
+        url = 'http://34.234.63.166:5000/uploadvideo/'
 
         # with open(filename, 'rb') as f:
         #     video_data = f.read()
